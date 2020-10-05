@@ -21,6 +21,21 @@ public static void main(String[] args) throws Exception
 
 ### Result
 ```Lil Darkie```
+
+```java
+public static void main(String[] args) throws Exception
+{
+    // Assuming you have already defined CLIENT_ID and CLIENT_SECRET
+    // Retrieve your token to access the Spotify API
+    String token = Spotify.getAccessToken(CLIENT_ID, CLIENT_SECRET);
+    // Get a track using its ID (Spotify URI without the prefixes and such)
+    SpotifyTrack track = Spotify.getTrack(token, "79s5XnCN4TJKTVMSmOx8Ep");
+    System.out.println(track.getName());
+}
+```
+
+### Result
+```Dior```
 ## Documentation
 #### All methods specified below are within the `Spotify` class.
 #### `getAccessToken(String clientID, String clientSecret)`
