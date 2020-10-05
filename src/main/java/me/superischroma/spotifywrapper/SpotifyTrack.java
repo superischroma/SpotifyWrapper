@@ -41,6 +41,8 @@ public class SpotifyTrack extends SpotifyObject
     @Getter
     private SpotifyTrackLink linkedFrom;
     @Getter
+    private String name;
+    @Getter
     private long popularity;
     @Getter
     private URL previewURL;
@@ -80,6 +82,7 @@ public class SpotifyTrack extends SpotifyObject
                 this.externalIDs.put(entry.getKey(), entry.getValue());
             }
         }
+        if (object.get("name") != null) this.name = (String) object.get("name");
         if (object.get("popularity") != null) this.popularity = (long) object.get("popularity");
         if (object.get("track_number") != null) this.trackNumber = (long) object.get("track_number");
         if (object.get("is_local") != null) this.local = (boolean) object.get("is_local");

@@ -24,6 +24,8 @@ public class SpotifyArtist extends SpotifyObject
     @Getter
     private List<SpotifyImage> images;
     @Getter
+    private String name;
+    @Getter
     private long popularity;
 
     public SpotifyArtist(JSONObject object)
@@ -48,6 +50,7 @@ public class SpotifyArtist extends SpotifyObject
             for (Object o : a)
                 this.images.add(new SpotifyImage((JSONObject) o));
         }
+        if (object.get("name") != null) this.name = (String) object.get("name");
         if (object.get("popularity") != null) this.popularity = (long) object.get("popularity");
     }
 }

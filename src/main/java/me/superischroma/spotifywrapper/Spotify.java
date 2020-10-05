@@ -49,7 +49,7 @@ public class Spotify
         return (String) object.get("access_token");
     }
 
-    private static JSONArray jsonSearch(String accessToken, String query, SpotifySearchType type, int limit, int resultOffset) throws Exception
+    private static JSONArray jsonSearch(String accessToken, String query, SpotifyType type, int limit, int resultOffset) throws Exception
     {
         ParameterManager manager = new ParameterManager();
         manager.add("q", query);
@@ -73,7 +73,7 @@ public class Spotify
         return getItems((JSONObject) ((JSONObject) PARSER.parse(content.toString())).get(type.getValue() + "s"));
     }
 
-    private static List<SpotifyObject> search(String accessToken, String query, SpotifySearchType type, int limit, int resultOffset) throws Exception
+    private static List<SpotifyObject> search(String accessToken, String query, SpotifyType type, int limit, int resultOffset) throws Exception
     {
         JSONArray items = jsonSearch(accessToken, query, type, limit, resultOffset);
         if (items == null) return null;
@@ -103,7 +103,7 @@ public class Spotify
     public static List<SpotifyTrack> searchByTrack(String accessToken, String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifySearchType.TRACK, limit, resultOffset);
+        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.TRACK, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyTrack> l = new ArrayList<>();
         for (SpotifyObject object : objects)
@@ -122,7 +122,7 @@ public class Spotify
     public static List<SpotifyAlbum> searchByAlbum(String accessToken, String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifySearchType.ALBUM, limit, resultOffset);
+        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.ALBUM, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyAlbum> l = new ArrayList<>();
         for (SpotifyObject object : objects)
@@ -141,7 +141,7 @@ public class Spotify
     public static List<SpotifyArtist> searchByArtist(String accessToken, String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifySearchType.ARTIST, limit, resultOffset);
+        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.ARTIST, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyArtist> l = new ArrayList<>();
         for (SpotifyObject object : objects)
@@ -160,12 +160,40 @@ public class Spotify
     public static List<SpotifyPlaylist> searchByPlaylist(String accessToken, String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifySearchType.PLAYLIST, limit, resultOffset);
+        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.PLAYLIST, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyPlaylist> l = new ArrayList<>();
         for (SpotifyObject object : objects)
             l.add((SpotifyPlaylist) object);
         return l;
+    }
+
+    private static SpotifyObject getObject(String accessToken, String id, SpotifyType type) throws Exception
+    {
+        URL url = new URL("https://api.spotify.com/v1/" + type.getValue() + "s/" + id);
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Bearer " + accessToken);
+        if (connection.getResponseCode() != 200)
+        {
+            System.out.println("Error getting " + type.getValue() + ": " + connection.getResponseCode() + " - " + connection.getResponseMessage());
+            return null;
+        }
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder content = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null)
+            content.append(line).append("\n");
+        JSONObject jo = (JSONObject) PARSER.parse(content.toString());
+        switch (type)
+        {
+            case TRACK: return SpotifyTrack.getTrack(jo);
+            case ALBUM: return SpotifyAlbum.getAlbum(jo);
+            case ARTIST: return new SpotifyArtist(jo);
+            case PLAYLIST: return new SpotifyPlaylist(jo);
+            case USER: return new SpotifyUser(jo);
+        }
+        return null;
     }
 
     /**
@@ -176,21 +204,7 @@ public class Spotify
      */
     public static SpotifyTrack getTrack(String accessToken, String id) throws Exception
     {
-        URL url = new URL("https://api.spotify.com/v1/tracks/" + id);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-        if (connection.getResponseCode() != 200)
-        {
-            System.out.println("Error getting track: " + connection.getResponseCode() + " - " + connection.getResponseMessage());
-            return null;
-        }
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder content = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null)
-            content.append(line).append("\n");
-        return SpotifyTrack.getTrack((JSONObject) PARSER.parse(content.toString()));
+        return (SpotifyTrack) getObject(accessToken, id, SpotifyType.TRACK);
     }
 
     /**
@@ -201,21 +215,7 @@ public class Spotify
      */
     public static SpotifyArtist getArtist(String accessToken, String id) throws Exception
     {
-        URL url = new URL("https://api.spotify.com/v1/artists/" + id);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-        if (connection.getResponseCode() != 200)
-        {
-            System.out.println("Error getting artist: " + connection.getResponseCode() + " - " + connection.getResponseMessage());
-            return null;
-        }
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder content = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null)
-            content.append(line).append("\n");
-        return new SpotifyArtist((JSONObject) PARSER.parse(content.toString()));
+        return (SpotifyArtist) getObject(accessToken, id, SpotifyType.ARTIST);
     }
 
     /**
@@ -226,21 +226,7 @@ public class Spotify
      */
     public static SpotifyAlbum getAlbum(String accessToken, String id) throws Exception
     {
-        URL url = new URL("https://api.spotify.com/v1/albums/" + id);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-        if (connection.getResponseCode() != 200)
-        {
-            System.out.println("Error getting album: " + connection.getResponseCode() + " - " + connection.getResponseMessage());
-            return null;
-        }
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder content = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null)
-            content.append(line).append("\n");
-        return SpotifyAlbum.getAlbum((JSONObject) PARSER.parse(content.toString()));
+        return (SpotifyAlbum) getObject(accessToken, id, SpotifyType.ALBUM);
     }
 
     /**
@@ -251,21 +237,18 @@ public class Spotify
      */
     public static SpotifyPlaylist getPlaylist(String accessToken, String id) throws Exception
     {
-        URL url = new URL("https://api.spotify.com/v1/playlists/" + id);
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Bearer " + accessToken);
-        if (connection.getResponseCode() != 200)
-        {
-            System.out.println("Error getting playlist: " + connection.getResponseCode() + " - " + connection.getResponseMessage());
-            return null;
-        }
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder content = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null)
-            content.append(line).append("\n");
-        return new SpotifyPlaylist((JSONObject) PARSER.parse(content.toString()));
+        return (SpotifyPlaylist) getObject(accessToken, id, SpotifyType.PLAYLIST);
+    }
+
+    /**
+     * Retrieve the captured state of a user from the Spotify API.
+     * @param accessToken Used to access the Web API.
+     * @param id The user's ID.
+     * @return A SpotifyUser object containing all of the user's information.
+     */
+    public static SpotifyUser getUser(String accessToken, String id) throws Exception
+    {
+        return (SpotifyUser) getObject(accessToken, id, SpotifyType.USER);
     }
 
     /**
@@ -329,11 +312,11 @@ public class Spotify
         return (JSONArray) paging.get("items");
     }
 
-    private static String split(Collection<SpotifySearchType> collection, String d)
+    private static String split(Collection<SpotifyType> collection, String d)
     {
         StringBuilder r = new StringBuilder();
         boolean b = false;
-        for (SpotifySearchType type : collection)
+        for (SpotifyType type : collection)
         {
             if (b)
                 r.append(d);

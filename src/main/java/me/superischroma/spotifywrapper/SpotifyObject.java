@@ -19,8 +19,6 @@ public class SpotifyObject
     @Getter
     protected URI uri;
     @Getter
-    protected String name;
-    @Getter
     protected JSONObject object;
 
     public SpotifyObject(JSONObject object)
@@ -42,7 +40,6 @@ public class SpotifyObject
             if (object.get("uri") != null) this.uri = new URI((String) object.get("uri"));
         }
         catch (URISyntaxException ex) {} // it should not throw this either
-        if (object.get("name") != null) this.name = (String) object.get("name");
         this.object = object;
     }
 }

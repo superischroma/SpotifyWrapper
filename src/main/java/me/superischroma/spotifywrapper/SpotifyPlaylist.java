@@ -25,6 +25,8 @@ public class SpotifyPlaylist extends SpotifyObject
     @Getter
     private List<SpotifyImage> images;
     @Getter
+    private String name;
+    @Getter
     private SpotifyUser owner;
     @Getter
     private boolean pub;
@@ -50,6 +52,7 @@ public class SpotifyPlaylist extends SpotifyObject
             for (Object o : a)
                 this.images.add(new SpotifyImage((JSONObject) o));
         }
+        if (object.get("name") != null) this.name = (String) object.get("name");
         if (object.get("owner") != null) this.owner = new SpotifyUser((JSONObject) object.get("owner"));
         if (object.get("public") != null) this.pub = (boolean) object.get("public");
         if (object.get("snapshot_id") != null) this.snapshotID = (String) object.get("snapshot_id");
