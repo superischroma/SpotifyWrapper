@@ -22,7 +22,22 @@ public static void main(String[] args) throws Exception
 ### Result
 ```Lil Darkie```
 ## Documentation
-Documentation for the wrapper can be found within the code.
+#### `getAccessToken(String clientID, String clientSecret)`
+Returns an access token that can be used to access the rest of the Spotify API.
+#### `search(String accessToken, String query, SpotifySearchType type, int limit, int resultOffset)`
+Returns a JSONArray with items from the search.
+#### `searchByTrack(String accessToken, String query, int limit, int resultOffset)`
+Returns a List with tracks from the search.
+#### `searchByAlbum(String accessToken, String query, int limit, int resultOffset)`
+Returns a List with albums from the search.
+#### `searchByArtist(String accessToken, String query, int limit, int resultOffset)`
+Returns a List with artists from the search.
+#### `searchByPlaylist(String accessToken, String query, int limit, int resultOffset)`
+Returns a List with playlists from the search.
+#### `getTrack(String accessToken, String id)`
+Returns a SpotifyTrack object containing all of the track's information.
+#### `getArtist(String accessToken, String id)`
+Returns a SpotifyArtist object containing all of the artist's information.
 ## Implementation
 This Spotify wrapper can be implemented two ways:
 ### Maven
