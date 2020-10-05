@@ -23,9 +23,7 @@ public static void main(String[] args) throws Exception
 ```Lil Darkie```
 ## Documentation
 #### `getAccessToken(String clientID, String clientSecret)`
-Returns an access token that can be used to access the rest of the Spotify API.
-#### `search(String accessToken, String query, SpotifySearchType type, int limit, int resultOffset)`
-Returns a JSONArray with items from the search.
+Returns an access token that can be used to access the rest of the Spotify API. If you don't know how to get a client ID and client secret, please go to the [Spotify dashboard](https://developer.spotify.com/dashboard/) in order to create an application.
 #### `searchByTrack(String accessToken, String query, int limit, int resultOffset)`
 Returns a List with tracks from the search.
 #### `searchByAlbum(String accessToken, String query, int limit, int resultOffset)`
@@ -36,8 +34,20 @@ Returns a List with artists from the search.
 Returns a List with playlists from the search.
 #### `getTrack(String accessToken, String id)`
 Returns a SpotifyTrack object containing all of the track's information.
+#### `getAlbum(String accessToken, String id)`
+Returns a SpotifyAlbum object containing all of the album's information.
 #### `getArtist(String accessToken, String id)`
 Returns a SpotifyArtist object containing all of the artist's information.
+#### `getPlaylist(String accessToken, String id)`
+Returns a SpotifyPlaylist object containing all of the playlist's information.
+#### `findTrack(String accessToken, String name)`
+Returns the first track given when the query is the name provided.
+#### `findAlbum(String accessToken, String name)`
+Returns the first album given when the query is the name provided.
+#### `findArtist(String accessToken, String name)`
+Returns the first artist given when the query is the name provided.
+#### `findPlaylist(String accessToken, String name)`
+Returns the first playlist given when the query is the name provided.
 ## Implementation
 This Spotify wrapper can be implemented two ways:
 ### Maven
