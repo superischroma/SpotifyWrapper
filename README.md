@@ -40,6 +40,8 @@ Returns a SpotifyAlbum object containing all of the album's information.
 Returns a SpotifyArtist object containing all of the artist's information.
 #### `getPlaylist(String accessToken, String id)`
 Returns a SpotifyPlaylist object containing all of the playlist's information.
+#### `getUser(String accessToken, String id)`
+Returns a SpotifyUser object containing all of the user's information.
 #### `findTrack(String accessToken, String name)`
 Returns the first track given when the query is the name provided.
 #### `findAlbum(String accessToken, String name)`
