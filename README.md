@@ -22,6 +22,7 @@ public static void main(String[] args) throws Exception
 ### Result
 ```Lil Darkie```
 ## Documentation
+#### All methods specified below are within the `Spotify` class.
 #### `getAccessToken(String clientID, String clientSecret)`
 Returns an access token that can be used to access the rest of the Spotify API. If you don't know how to get a client ID and client secret, please go to the [Spotify dashboard](https://developer.spotify.com/dashboard/) in order to create an application.
 #### `searchByTrack(String accessToken, String query, int limit, int resultOffset)`
