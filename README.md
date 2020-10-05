@@ -2,7 +2,7 @@
 A simple Spotify API wrapper.
 The wrapper's use is as simple as accessing the Spotify class and using methods from it.
 
-## Example:
+## Example
 ```java
 public static void main(String[] args) throws Exception
 {
@@ -19,7 +19,7 @@ public static void main(String[] args) throws Exception
 }
 ```
 
-### Result:
+### Result
 ```Lil Darkie```
 ## Documentation
 Documentation for the wrapper can be found within the code.
