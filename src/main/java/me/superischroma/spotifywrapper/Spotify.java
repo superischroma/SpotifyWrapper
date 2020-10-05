@@ -20,36 +20,14 @@ public class Spotify
 {
     public static final JSONParser PARSER = new JSONParser();
 
-    /**
-     * Retrieves a Spotify access token using the specified client ID and client secret.
-     * @param clientID The client ID of your application.
-     * @param clientSecret The client secret of your application.
-     * @return An access token that can be used to access the rest of the Spotify API.
-     */
-    public static String getAccessToken(String clientID, String clientSecret) throws Exception
+    private final String accessToken;
+
+    public Spotify(String clientID, String clientSecret) throws Exception
     {
-        URL url = new URL("https://accounts.spotify.com/api/token");
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setDoOutput(true);
-        connection.setRequestProperty("Authorization", "Basic " +
-                Base64.getEncoder().encodeToString((clientID + ":" + clientSecret).getBytes()));
-        ParameterManager manager = new ParameterManager();
-        manager.add("grant_type", "client_credentials");
-        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
-        out.write(manager.getParameters());
-        out.flush();
-        out.close();
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuilder content = new StringBuilder();
-        String line;
-        while ((line = in.readLine()) != null)
-            content.append(line);
-        JSONObject object = (JSONObject) PARSER.parse(content.toString());
-        return (String) object.get("access_token");
+        this.accessToken = getAccessToken(clientID, clientSecret);
     }
 
-    private static JSONArray jsonSearch(String accessToken, String query, SpotifyType type, int limit, int resultOffset) throws Exception
+    private JSONArray jsonSearch(String query, SpotifyType type, int limit, int resultOffset) throws Exception
     {
         ParameterManager manager = new ParameterManager();
         manager.add("q", query);
@@ -73,9 +51,9 @@ public class Spotify
         return getItems((JSONObject) ((JSONObject) PARSER.parse(content.toString())).get(type.getValue() + "s"));
     }
 
-    private static List<SpotifyObject> search(String accessToken, String query, SpotifyType type, int limit, int resultOffset) throws Exception
+    private List<SpotifyObject> search(String query, SpotifyType type, int limit, int resultOffset) throws Exception
     {
-        JSONArray items = jsonSearch(accessToken, query, type, limit, resultOffset);
+        JSONArray items = jsonSearch(query, type, limit, resultOffset);
         if (items == null) return null;
         List<SpotifyObject> objects = new ArrayList<>();
         for (Object o : items)
@@ -94,16 +72,15 @@ public class Spotify
 
     /**
      * Search for tracks on Spotify.
-     * @param accessToken Used to access the Web API.
      * @param query Used to find something to search.
      * @param limit Number of tracks given back.
      * @param resultOffset Where the tracks should start to be searched from.
      * @return A List with the tracks.
      */
-    public static List<SpotifyTrack> searchByTrack(String accessToken, String query, int limit, int resultOffset)
+    public List<SpotifyTrack> searchByTrack(String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.TRACK, limit, resultOffset);
+        List<SpotifyObject> objects = search(query, SpotifyType.TRACK, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyTrack> l = new ArrayList<>();
         for (SpotifyObject object : objects)
@@ -113,16 +90,15 @@ public class Spotify
 
     /**
      * Search for albums on Spotify.
-     * @param accessToken Used to access the Web API.
      * @param query Used to find something to search.
      * @param limit Number of albums given back.
      * @param resultOffset Where the albums should start to be searched from.
      * @return A List with the albums.
      */
-    public static List<SpotifyAlbum> searchByAlbum(String accessToken, String query, int limit, int resultOffset)
+    public List<SpotifyAlbum> searchByAlbum(String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.ALBUM, limit, resultOffset);
+        List<SpotifyObject> objects = search(query, SpotifyType.ALBUM, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyAlbum> l = new ArrayList<>();
         for (SpotifyObject object : objects)
@@ -132,16 +108,15 @@ public class Spotify
 
     /**
      * Search for artists on Spotify.
-     * @param accessToken Used to access the Web API.
      * @param query Used to find something to search.
      * @param limit Number of artists given back.
      * @param resultOffset Where the artists should start to be searched from.
      * @return A List with the artists.
      */
-    public static List<SpotifyArtist> searchByArtist(String accessToken, String query, int limit, int resultOffset)
+    public List<SpotifyArtist> searchByArtist(String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.ARTIST, limit, resultOffset);
+        List<SpotifyObject> objects = search(query, SpotifyType.ARTIST, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyArtist> l = new ArrayList<>();
         for (SpotifyObject object : objects)
@@ -151,16 +126,15 @@ public class Spotify
 
     /**
      * Search for playlists on Spotify.
-     * @param accessToken Used to access the Web API.
      * @param query Used to find something to search.
      * @param limit Number of playlists given back.
      * @param resultOffset Where the playlists should start to be searched from.
      * @return A List with the playlists.
      */
-    public static List<SpotifyPlaylist> searchByPlaylist(String accessToken, String query, int limit, int resultOffset)
+    public List<SpotifyPlaylist> searchByPlaylist(String query, int limit, int resultOffset)
             throws Exception
     {
-        List<SpotifyObject> objects = search(accessToken, query, SpotifyType.PLAYLIST, limit, resultOffset);
+        List<SpotifyObject> objects = search(query, SpotifyType.PLAYLIST, limit, resultOffset);
         if (objects == null) return null;
         List<SpotifyPlaylist> l = new ArrayList<>();
         for (SpotifyObject object : objects)
@@ -168,7 +142,7 @@ public class Spotify
         return l;
     }
 
-    private static SpotifyObject getObject(String accessToken, String id, SpotifyType type) throws Exception
+    private SpotifyObject getObject(String id, SpotifyType type) throws Exception
     {
         URL url = new URL("https://api.spotify.com/v1/" + type.getValue() + "s/" + id);
         HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
@@ -198,68 +172,62 @@ public class Spotify
 
     /**
      * Retrieve the captured state of a track from the Spotify API.
-     * @param accessToken Used to access the Web API.
      * @param id The track's ID.
      * @return A SpotifyTrack object containing all of the track's information.
      */
-    public static SpotifyTrack getTrack(String accessToken, String id) throws Exception
+    public SpotifyTrack getTrack(String id) throws Exception
     {
-        return (SpotifyTrack) getObject(accessToken, id, SpotifyType.TRACK);
+        return (SpotifyTrack) getObject(id, SpotifyType.TRACK);
     }
 
     /**
      * Retrieve the captured state of an artist from the Spotify API.
-     * @param accessToken Used to access the Web API.
      * @param id The artist's ID.
      * @return A SpotifyArtist object containing all of the artist's information.
      */
-    public static SpotifyArtist getArtist(String accessToken, String id) throws Exception
+    public SpotifyArtist getArtist(String id) throws Exception
     {
-        return (SpotifyArtist) getObject(accessToken, id, SpotifyType.ARTIST);
+        return (SpotifyArtist) getObject(id, SpotifyType.ARTIST);
     }
 
     /**
      * Retrieve the captured state of an album from the Spotify API.
-     * @param accessToken Used to access the Web API.
      * @param id The album's ID.
      * @return A SpotifyAlbum object containing all of the album's information.
      */
-    public static SpotifyAlbum getAlbum(String accessToken, String id) throws Exception
+    public SpotifyAlbum getAlbum(String id) throws Exception
     {
-        return (SpotifyAlbum) getObject(accessToken, id, SpotifyType.ALBUM);
+        return (SpotifyAlbum) getObject(id, SpotifyType.ALBUM);
     }
 
     /**
      * Retrieve the captured state of a playlist from the Spotify API.
-     * @param accessToken Used to access the Web API.
      * @param id The album's ID.
      * @return A SpotifyPlaylist object containing all of the playlist's information.
      */
-    public static SpotifyPlaylist getPlaylist(String accessToken, String id) throws Exception
+    public SpotifyPlaylist getPlaylist(String id) throws Exception
     {
-        return (SpotifyPlaylist) getObject(accessToken, id, SpotifyType.PLAYLIST);
+        return (SpotifyPlaylist) getObject(id, SpotifyType.PLAYLIST);
     }
 
     /**
      * Retrieve the captured state of a user from the Spotify API.
-     * @param accessToken Used to access the Web API.
      * @param id The user's ID.
      * @return A SpotifyUser object containing all of the user's information.
      */
-    public static SpotifyUser getUser(String accessToken, String id) throws Exception
+    public SpotifyUser getUser(String id) throws Exception
     {
-        return (SpotifyUser) getObject(accessToken, id, SpotifyType.USER);
+        return (SpotifyUser) getObject(id, SpotifyType.USER);
     }
 
     /**
      * Attempts to find the first artist with the specified name.
-     * @param accessToken Used to access the Web API.
      * @param name Name of the artist.
      * @return A SpotifyArtist that meets the name requirement.
      */
-    public static SpotifyArtist findArtist(String accessToken, String name) throws Exception
+    public SpotifyArtist findArtist(String name) throws Exception
     {
-        List<SpotifyArtist> artists = searchByArtist(accessToken, name, 1, 0);
+        List<SpotifyArtist> artists = searchByArtist(name, 1, 0);
         if (artists == null) return null;
         if (artists.size() == 0) return null;
         return artists.get(0);
@@ -267,13 +235,12 @@ public class Spotify
 
     /**
      * Attempts to find the first track with the specified name.
-     * @param accessToken Used to access the Web API.
      * @param name Name of the track.
      * @return A SpotifyTrack that meets the name requirement.
      */
-    public static SpotifyTrack findTrack(String accessToken, String name) throws Exception
+    public SpotifyTrack findTrack(String name) throws Exception
     {
-        List<SpotifyTrack> tracks = searchByTrack(accessToken, name, 1, 0);
+        List<SpotifyTrack> tracks = searchByTrack(name, 1, 0);
         if (tracks == null) return null;
         if (tracks.size() == 0) return null;
         return tracks.get(0);
@@ -281,13 +248,12 @@ public class Spotify
 
     /**
      * Attempts to find the first playlist with the specified name.
-     * @param accessToken Used to access the Web API.
      * @param name Name of the playlist.
      * @return A SpotifyPlaylist that meets the name requirement.
      */
-    public static SpotifyPlaylist findPlaylist(String accessToken, String name) throws Exception
+    public SpotifyPlaylist findPlaylist(String name) throws Exception
     {
-        List<SpotifyPlaylist> playlists = searchByPlaylist(accessToken, name, 1, 0);
+        List<SpotifyPlaylist> playlists = searchByPlaylist(name, 1, 0);
         if (playlists == null) return null;
         if (playlists.size() == 0) return null;
         return playlists.get(0);
@@ -295,13 +261,12 @@ public class Spotify
 
     /**
      * Attempts to find the first album with the specified name.
-     * @param accessToken Used to access the Web API.
      * @param name Name of the album.
      * @return A SpotifyAlbum that meets the name requirement.
      */
-    public static SpotifyAlbum findAlbum(String accessToken, String name) throws Exception
+    public SpotifyAlbum findAlbum(String name) throws Exception
     {
-        List<SpotifyAlbum> albums = searchByAlbum(accessToken, name, 1, 0);
+        List<SpotifyAlbum> albums = searchByAlbum(name, 1, 0);
         if (albums == null) return null;
         if (albums.size() == 0) return null;
         return albums.get(0);
@@ -325,5 +290,34 @@ public class Spotify
             r.append(type.getValue());
         }
         return r.toString();
+    }
+
+    /**
+     * Retrieves a Spotify access token using the specified client ID and client secret.
+     * @param clientID The client ID of your application.
+     * @param clientSecret The client secret of your application.
+     * @return An access token that can be used to access the rest of the Spotify API.
+     */
+    private static String getAccessToken(String clientID, String clientSecret) throws Exception
+    {
+        URL url = new URL("https://accounts.spotify.com/api/token");
+        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setDoOutput(true);
+        connection.setRequestProperty("Authorization", "Basic " +
+                Base64.getEncoder().encodeToString((clientID + ":" + clientSecret).getBytes()));
+        ParameterManager manager = new ParameterManager();
+        manager.add("grant_type", "client_credentials");
+        BufferedWriter out = new BufferedWriter(new OutputStreamWriter(connection.getOutputStream()));
+        out.write(manager.getParameters());
+        out.flush();
+        out.close();
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuilder content = new StringBuilder();
+        String line;
+        while ((line = in.readLine()) != null)
+            content.append(line);
+        JSONObject object = (JSONObject) PARSER.parse(content.toString());
+        return (String) object.get("access_token");
     }
 }
