@@ -37,34 +37,34 @@ public static void main(String[] args) throws Exception
 ### Result
 ```Dior```
 ## Documentation
-#### All methods specified below are within the `Spotify` class.
-#### `getAccessToken(String clientID, String clientSecret)`
-Returns an access token that can be used to access the rest of the Spotify API. If you don't know how to get a client ID and client secret, please go to the [Spotify dashboard](https://developer.spotify.com/dashboard/) in order to create an application.
-#### `searchByTrack(String accessToken, String query, int limit, int resultOffset)`
+#### `new Spotify(String clientID, String clientSecret)`
+Instancing the Spotify class gives you access to all the methods you need to access the rest of the API. If you don't know how to get a client ID and client secret, please go to the [Spotify dashboard](https://developer.spotify.com/dashboard/) in order to create an application.
+#### All methods specified below are part of an instanced `Spotify` class.
+#### `searchByTrack(String query, int limit, int resultOffset)`
 Returns a List with tracks from the search.
-#### `searchByAlbum(String accessToken, String query, int limit, int resultOffset)`
+#### `searchByAlbum(String query, int limit, int resultOffset)`
 Returns a List with albums from the search.
-#### `searchByArtist(String accessToken, String query, int limit, int resultOffset)`
+#### `searchByArtist(String query, int limit, int resultOffset)`
 Returns a List with artists from the search.
-#### `searchByPlaylist(String accessToken, String query, int limit, int resultOffset)`
+#### `searchByPlaylist(String query, int limit, int resultOffset)`
 Returns a List with playlists from the search.
-#### `getTrack(String accessToken, String id)`
+#### `getTrack(String id)`
 Returns a SpotifyTrack object containing all of the track's information.
-#### `getAlbum(String accessToken, String id)`
+#### `getAlbum(String id)`
 Returns a SpotifyAlbum object containing all of the album's information.
-#### `getArtist(String accessToken, String id)`
+#### `getArtist(String id)`
 Returns a SpotifyArtist object containing all of the artist's information.
-#### `getPlaylist(String accessToken, String id)`
+#### `getPlaylist(String id)`
 Returns a SpotifyPlaylist object containing all of the playlist's information.
-#### `getUser(String accessToken, String id)`
+#### `getUser(String id)`
 Returns a SpotifyUser object containing all of the user's information.
-#### `findTrack(String accessToken, String name)`
+#### `findTrack(String name)`
 Returns the first track given when the query is the name provided.
-#### `findAlbum(String accessToken, String name)`
+#### `findAlbum(String name)`
 Returns the first album given when the query is the name provided.
-#### `findArtist(String accessToken, String name)`
+#### `findArtist(String name)`
 Returns the first artist given when the query is the name provided.
-#### `findPlaylist(String accessToken, String name)`
+#### `findPlaylist(String name)`
 Returns the first playlist given when the query is the name provided.
 ## Implementation
 This Spotify wrapper can be implemented two ways:
