@@ -18,7 +18,7 @@ import java.util.Map;
  * Some values may be null if track is created from a album or playlist. (this is called a partial track object)
  * This object will provide an incomplete album object.
  */
-public class SpotifyTrack
+public class SpotifyTrack extends SpotifyObject
 {
     private static List<SpotifyTrack> CREATED_TRACKS = new ArrayList<>();
 
@@ -37,17 +37,9 @@ public class SpotifyTrack
     @Getter
     private Map<String, String> externalIDs;
     @Getter
-    private Map<String, String> externalURLs;
-    @Getter
-    private String href;
-    @Getter
-    private String id;
-    @Getter
     private boolean playable;
     @Getter
     private SpotifyTrackLink linkedFrom;
-    @Getter
-    private String name;
     @Getter
     private long popularity;
     @Getter
@@ -55,14 +47,11 @@ public class SpotifyTrack
     @Getter
     private long trackNumber;
     @Getter
-    private URI uri;
-    @Getter
     private boolean local;
-    @Getter
-    private JSONObject object;
 
     private SpotifyTrack(JSONObject object)
     {
+        super(object);
         if (object.get("album") != null) this.album = SpotifyAlbum.getAlbum((JSONObject) object.get("album"));
         if (object.get("artists") != null)
         {
@@ -91,19 +80,6 @@ public class SpotifyTrack
                 this.externalIDs.put(entry.getKey(), entry.getValue());
             }
         }
-        if (object.get("external_urls") != null)
-        {
-            this.externalURLs = new HashMap<>();
-            JSONObject o = (JSONObject) object.get("external_urls");
-            for (Object e : o.entrySet())
-            {
-                Map.Entry<String, String> entry = (Map.Entry<String, String>) e;
-                this.externalURLs.put(entry.getKey(), entry.getValue());
-            }
-        }
-        if (object.get("href") != null) this.href = (String) object.get("href");
-        if (object.get("id") != null) this.id = (String) object.get("id");
-        if (object.get("name") != null) this.name = (String) object.get("name");
         if (object.get("popularity") != null) this.popularity = (long) object.get("popularity");
         if (object.get("track_number") != null) this.trackNumber = (long) object.get("track_number");
         if (object.get("is_local") != null) this.local = (boolean) object.get("is_local");
@@ -112,12 +88,6 @@ public class SpotifyTrack
             if (object.get("preview_url") != null) this.previewURL = new URL((String) object.get("preview_url"));
         }
         catch (MalformedURLException ex) {} // it should not be throwing this
-        try
-        {
-            if (object.get("uri") != null) this.uri = new URI((String) object.get("uri"));
-        }
-        catch (URISyntaxException ex) {} // it should not throw this either
-        this.object = object;
         CREATED_TRACKS.add(this);
     }
 
