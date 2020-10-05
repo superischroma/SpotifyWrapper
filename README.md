@@ -2,7 +2,7 @@
 A simple Spotify API wrapper.
 The wrapper's use is as simple as accessing the Spotify class and using methods from it.
 
-Example:
+## Example:
 ```java
 public static void main(String[] args) throws Exception
 {
@@ -19,8 +19,29 @@ public static void main(String[] args) throws Exception
 }
 ```
 
-Result:
-
+### Result:
 ```Lil Darkie```
-
+## Documentation
 Documentation for the wrapper can be found within the code.
+## Implementation
+This Spotify wrapper can be implemented two ways:
+### Maven
+#### Repository
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+#### Dependency
+```xml
+<dependency>
+    <groupId>com.github.superischroma</groupId>
+    <artifactId>SpotifyWrapper</artifactId>
+    <version>-SNAPSHOT</version>
+</dependency>
+```
+### Vanilla Java
+Simply add the latest release from the [release page](https://github.com/superischroma/SpotifyWrapper/releases) to your project's classpath.
