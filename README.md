@@ -48,6 +48,10 @@ Returns a List with albums from the search.
 Returns a List with artists from the search.
 #### `searchByPlaylist(String query, int limit, int resultOffset)`
 Returns a List with playlists from the search.
+#### `searchByShow(String query, int limit, int resultOffset)`
+Returns a List with shows from the search.
+#### `searchByEpisode(String query, int limit, int resultOffset)`
+Returns a List with episodes from the search.
 #### `getTrack(String id)`
 Returns a SpotifyTrack object containing all of the track's information.
 #### `getAlbum(String id)`
@@ -58,6 +62,10 @@ Returns a SpotifyArtist object containing all of the artist's information.
 Returns a SpotifyPlaylist object containing all of the playlist's information.
 #### `getUser(String id)`
 Returns a SpotifyUser object containing all of the user's information.
+#### `getShow(String id)`
+Returns a SpotifyShow object containing all of the show's information.
+#### `getEpisode(String id)`
+Returns a SpotifyEpisode object containing all of the episode's information.
 #### `findTrack(String name)`
 Returns the first track given when the query is the name provided.
 #### `findAlbum(String name)`
@@ -66,6 +74,10 @@ Returns the first album given when the query is the name provided.
 Returns the first artist given when the query is the name provided.
 #### `findPlaylist(String name)`
 Returns the first playlist given when the query is the name provided.
+#### `findShow(String name)`
+Returns the first show given when the query is the name provided.
+#### `findEpisode(String name)`
+Returns the first episode given when the query is the name provided.
 ## Implementation
 This Spotify wrapper can be implemented two ways:
 ### Maven

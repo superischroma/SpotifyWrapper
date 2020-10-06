@@ -65,6 +65,8 @@ public class Spotify
                 case ALBUM: objects.add(SpotifyAlbum.getAlbum(jo)); break;
                 case ARTIST: objects.add(new SpotifyArtist(jo)); break;
                 case PLAYLIST: objects.add(new SpotifyPlaylist(jo)); break;
+                case SHOW: objects.add(SpotifyShow.getShow(jo)); break;
+                case EPISODE: objects.add(SpotifyEpisode.getEpisode(jo)); break;
             }
         }
         return objects;
@@ -139,6 +141,42 @@ public class Spotify
         List<SpotifyPlaylist> l = new ArrayList<>();
         for (SpotifyObject object : objects)
             l.add((SpotifyPlaylist) object);
+        return l;
+    }
+
+    /**
+     * Search for shows on Spotify.
+     * @param query Used to find something to search.
+     * @param limit Number of shows given back.
+     * @param resultOffset Where the shows should start to be searched from.
+     * @return A List with the shows.
+     */
+    public List<SpotifyShow> searchByShow(String query, int limit, int resultOffset)
+            throws Exception
+    {
+        List<SpotifyObject> objects = search(query, SpotifyType.SHOW, limit, resultOffset);
+        if (objects == null) return null;
+        List<SpotifyShow> l = new ArrayList<>();
+        for (SpotifyObject object : objects)
+            l.add((SpotifyShow) object);
+        return l;
+    }
+
+    /**
+     * Search for episodes on Spotify.
+     * @param query Used to find something to search.
+     * @param limit Number of episodes given back.
+     * @param resultOffset Where the episodes should start to be searched from.
+     * @return A List with the episodes.
+     */
+    public List<SpotifyEpisode> searchByEpisode(String query, int limit, int resultOffset)
+            throws Exception
+    {
+        List<SpotifyObject> objects = search(query, SpotifyType.EPISODE, limit, resultOffset);
+        if (objects == null) return null;
+        List<SpotifyEpisode> l = new ArrayList<>();
+        for (SpotifyObject object : objects)
+            l.add((SpotifyEpisode) object);
         return l;
     }
 
@@ -221,6 +259,26 @@ public class Spotify
     }
 
     /**
+     * Retrieve the captured state of a show from the Spotify API.
+     * @param id The show's ID.
+     * @return A SpotifyShow object containing all of the show's information.
+     */
+    public SpotifyShow getShow(String id) throws Exception
+    {
+        return (SpotifyShow) getObject(id, SpotifyType.SHOW);
+    }
+
+    /**
+     * Retrieve the captured state of an episode from the Spotify API.
+     * @param id The episode's ID.
+     * @return A SpotifyEpisode object containing all of the episode's information.
+     */
+    public SpotifyEpisode getEpisode(String id) throws Exception
+    {
+        return (SpotifyEpisode) getObject(id, SpotifyType.EPISODE);
+    }
+
+    /**
      * Attempts to find the first artist with the specified name.
      * @param name Name of the artist.
      * @return A SpotifyArtist that meets the name requirement.
@@ -270,6 +328,32 @@ public class Spotify
         if (albums == null) return null;
         if (albums.size() == 0) return null;
         return albums.get(0);
+    }
+
+    /**
+     * Attempts to find the first show with the specified name.
+     * @param name Name of the show.
+     * @return A SpotifyShow that meets the name requirement.
+     */
+    public SpotifyShow findShow(String name) throws Exception
+    {
+        List<SpotifyShow> shows = searchByShow(name, 1, 0);
+        if (shows == null) return null;
+        if (shows.size() == 0) return null;
+        return shows.get(0);
+    }
+
+    /**
+     * Attempts to find the first episode with the specified name.
+     * @param name Name of the episode.
+     * @return A SpotifyEpisode that meets the name requirement.
+     */
+    public SpotifyEpisode findEpisode(String name) throws Exception
+    {
+        List<SpotifyEpisode> episodes = searchByEpisode(name, 1, 0);
+        if (episodes == null) return null;
+        if (episodes.size() == 0) return null;
+        return episodes.get(0);
     }
 
     private static JSONArray getItems(JSONObject paging)
