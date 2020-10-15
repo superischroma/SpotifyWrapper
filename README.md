@@ -7,10 +7,10 @@ The wrapper's use is as simple as accessing the Spotify class and using methods 
 public static void main(String[] args) throws Exception
 {
     // Assuming you have already defined CLIENT_ID and CLIENT_SECRET
-    // Retrieve your token to access the Spotify API
-    String token = Spotify.getAccessToken(CLIENT_ID, CLIENT_SECRET);
+    // Create a new Spotify instance
+    Spotify spotify = new Spotify(CLIENT_ID, CLIENT_SECRET);
     // Search by artist with a specified query, result count, and result starting point and store the results in a List.
-    List<SpotifyArtist> artists = Spotify.searchByArtist(token, "lil darkie", 10, 0);
+    List<SpotifyArtist> artists = spotify.searchByArtist("lil darkie", 10, 0);
     // Pull the first artist found out of the List.
     SpotifyArtist first = artists.get(0); // Assuming Lil Darkie is the first result.
     // Here is where you would do stuff with the artist.
@@ -26,10 +26,10 @@ public static void main(String[] args) throws Exception
 public static void main(String[] args) throws Exception
 {
     // Assuming you have already defined CLIENT_ID and CLIENT_SECRET
-    // Retrieve your token to access the Spotify API
-    String token = Spotify.getAccessToken(CLIENT_ID, CLIENT_SECRET);
+    // Create a new Spotify instance
+    Spotify spotify = new Spotify(CLIENT_ID, CLIENT_SECRET);
     // Get a track using its ID (Spotify URI without the prefixes and such)
-    SpotifyTrack track = Spotify.getTrack(token, "79s5XnCN4TJKTVMSmOx8Ep");
+    SpotifyTrack track = spotify.getTrack("79s5XnCN4TJKTVMSmOx8Ep");
     System.out.println(track.getName());
 }
 ```
