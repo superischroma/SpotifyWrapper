@@ -10,9 +10,9 @@ public static void main(String[] args) throws Exception
     // Create a new Spotify instance
     Spotify spotify = new Spotify(CLIENT_ID, CLIENT_SECRET);
     // Search by artist with a specified query, result count, and result starting point and store the results in a List.
-    List<SpotifyArtist> artists = spotify.searchByArtist("lil darkie", 10, 0);
+    List<SpotifyArtist> artists = spotify.searchByArtist("pop smoke", 10, 0);
     // Pull the first artist found out of the List.
-    SpotifyArtist first = artists.get(0); // Assuming Lil Darkie is the first result.
+    SpotifyArtist first = artists.get(0); // Assuming Pop Smoke is the first result.
     // Here is where you would do stuff with the artist.
     // For the example, we are just printing the name of the artist.
     System.out.println(first.getName());
@@ -20,7 +20,7 @@ public static void main(String[] args) throws Exception
 ```
 
 ### Result
-```Lil Darkie```
+```Pop Smoke```
 ###
 ```java
 public static void main(String[] args) throws Exception
